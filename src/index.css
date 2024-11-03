@@ -141,6 +141,33 @@ ul {
 }
 
 
+.ui.card {
+  width: 400px; 
+  height: 410px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+.ui.card .image img {
+  width: 100%; 
+  height: 200px; 
+  object-fit: cover; 
+}
+
+.ui.card .content {
+  text-align: left;
+}
+
+
+.ui.card .extra.content {
+  text-align: left;
+}
+
+
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
