@@ -9,18 +9,20 @@ function Home() {
   const [showGreasedOnly, setShowGreasedOnly] = useState(false);
   const [sortType, setSortType] = useState("");
   const [allHogs, setAllHogs] = useState(hogs);
-  const [hiddenHogs, setHiddenHogs] = useState(new Set()); 
+  const [hiddenHogs, setHiddenHogs] = useState(new Set());
 
-  const handleHogClick = (hog) => {
-    setSelectedHog(hog);
+  const handleViewDetails = (e, hog) => {
+    e.stopPropagation();
+    setSelectedHog(selectedHog === hog ? null : hog);
   };
 
-  const handleAddHog = (newHog) => {
+  const AddHog = (newHog) => {
     setAllHogs([...allHogs, newHog]);
   };
 
   const handleToggleHide = (e, hogId) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
+    
     setHiddenHogs(prev => {
       const newHidden = new Set(prev);
       if (newHidden.has(hogId)) {
@@ -32,11 +34,10 @@ function Home() {
     });
   };
 
- 
   const displayedHogs = allHogs
-    .filter(hog => !hiddenHogs.has(hog.id)) 
-    .filter(hog => !showGreasedOnly || hog.greased) 
-    .sort((a, b) => { 
+    .filter(hog => !hiddenHogs.has(hog.id))
+    .filter(hog => !showGreasedOnly || hog.greased)
+    .sort((a, b) => {
       switch (sortType) {
         case "name":
           return a.name.localeCompare(b.name);
@@ -49,29 +50,22 @@ function Home() {
 
   return (
     <div className="ui container my-5">
-      <Form onAddHog={handleAddHog} />
-      
-      <div className="ui grid">
-        <div className="eight wide column">
-          <Filter 
-            showGreasedOnly={showGreasedOnly} 
-            setShowGreasedOnly={setShowGreasedOnly} 
-          />
-        </div>
-        <div className="eight wide column">
-          <Sort 
-            sortType={sortType} 
-            setSortType={setSortType} 
-          />
+      <div className="ui stackable grid">
+        <div className="sixteen wide column">
+          <div className="ui segment">
+            <Filter showGreasedOnly={showGreasedOnly} setShowGreasedOnly={setShowGreasedOnly} />
+          </div>
+          <div className="ui segment">
+            <Sort sortType={sortType} setSortType={setSortType} />
+          </div>
         </div>
       </div>
 
-      {/* Show number of hidden hogs and option to reset */}
       {hiddenHogs.size > 0 && (
         <div className="ui message">
           <p>
-            {hiddenHogs.size} hog(s) hidden. 
-            <button 
+            {hiddenHogs.size} hog(s) hidden.{" "}
+            <button
               className="ui button small primary ml-3"
               onClick={() => setHiddenHogs(new Set())}
             >
@@ -84,16 +78,27 @@ function Home() {
       <div className="ui grid">
         {displayedHogs.map((hog) => (
           <div className="ui eight wide column" key={hog.id}>
-            <div className="ui card" onClick={() => handleHogClick(hog)}>
+            <div className="ui card">
               <div className="image">
                 <img src={hog.image} alt={hog.name} />
               </div>
               <div className="content">
                 <h3 className="header">{hog.name}</h3>
-                <button
-                className="ui right floated mini button"
-                onClick={(e) => handleToggleHide(e, hog.id)}>Hide</button>
+                <div className="ui two buttons">
+                  <button 
+                    className="ui basic blue button"
+                    onClick={(e) => handleViewDetails(e, hog)}
+                  >
+                    {selectedHog === hog ? 'Hide Details' : 'View Details'}
+                  </button>
+                  <button
+                    className="ui basic red button"
+                    onClick={(e) => handleToggleHide(e, hog.id)}
+                  >
+                    Hide
+                  </button>
                 </div>
+              </div>
               {selectedHog === hog && (
                 <div className="extra content">
                   <p><strong>Specialty:</strong> {hog.specialty}</p>
@@ -107,12 +112,15 @@ function Home() {
         ))}
       </div>
 
-      {/* Show message when no hogs are visible */}
       {displayedHogs.length === 0 && (
         <div className="ui message">
           <p>No hogs to display. {hiddenHogs.size > 0 && 'Try showing hidden hogs.'}</p>
         </div>
       )}
+
+      <div className="ui segment">
+        <Form onAddHog={AddHog} />
+      </div>
     </div>
   );
 }

@@ -7,9 +7,9 @@ function Form({ onAddHog }) {
     greased: false,
     weight: "",
     highest_medal_achieved: "",
-    image: "" // You might want to use a default image
+    image: "" 
   });
-
+//Makes the whole form visible details visible to the user
   const [showForm, setShowForm] = useState(false);
 
   const handleChange = (e) => {
@@ -26,8 +26,8 @@ function Form({ onAddHog }) {
     // Create new hog with form data
     const newHog = {
       ...formData,
-      id: Date.now(), // Generate a unique ID
-      weight: Number(formData.weight) // Convert weight to number
+      id: Date.now(), 
+      weight: Number(formData.weight) 
     };
 
     // Pass the new hog to parent component
